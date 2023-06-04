@@ -1,15 +1,17 @@
-import openai
 import os
+from typing import List
 
+import openai
+from dotenv import load_dotenv
 from langchain.document_loaders import TextLoader
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import TokenTextSplitter
 from langchain.schema import Document
-from typing import List
-from utils import open_file
-from text_processing import Preprocessor
+from langchain.text_splitter import TokenTextSplitter
 
-openai.api_key = open_file("/Users/jameswinans/.openai_key")
+from text_processing import Preprocessor
+from utils import open_file
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class TextIngestor:

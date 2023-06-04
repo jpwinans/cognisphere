@@ -11,3 +11,6 @@ qdrant_client
 requests
 tqdm
 trafilatura
+fastapi
+uvicorn
+python-dotenv
