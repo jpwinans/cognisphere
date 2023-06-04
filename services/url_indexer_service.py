@@ -44,4 +44,4 @@ async def scrape_urls(request: ScrapeUrlsRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(url_index_service, host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
+    uvicorn.run("services:url_index_service", host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
