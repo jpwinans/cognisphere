@@ -45,27 +45,24 @@ These instructions will help you set up the CogniSphere project on your local ma
 
 1. Clone the repository:
 
-git clone [your_github_repo_url]
-
-arduino
-Copy code
+```
+git clone https://github.com/jpwinans/cognisphere.git
+```
 
 2. Create a virtual environment (optional):
 
+```
 cd CogniSphere
 python -m venv venv
 source venv/bin/activate # for Linux and macOS
 venv\Scripts\activate # for Windows
-
-markdown
-Copy code
+```
 
 3. Install the required packages:
 
+```
 pip install -r requirements.txt
-
-markdown
-Copy code
+```
 
 4. Add your API keys and other required configurations in the appropriate configuration files.
 
