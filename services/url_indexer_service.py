@@ -16,7 +16,7 @@ SERVICE_HOST = os.getenv("SERVICE_HOST")
 URL_INDEXER_SERVICE_PORT = os.getenv("URL_INDEXER_SERVICE_PORT")
 INDEX_COLLECTION_NAME = os.getenv("INDEX_COLLECTION_NAME")
 
-app = FastAPI()
+url_index_service = FastAPI()
 web_ingestor = WebIngestor()
 document_indexer = DocumentIndexer(
     collection_name=INDEX_COLLECTION_NAME, host=QDRANT_HOST, port=QDRANT_PORT
