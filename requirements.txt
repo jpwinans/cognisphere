@@ -1,0 +1,15 @@
+langchain
+openai
+pymongo
+llama_index
+nltk
+pydantic
+tiktoken
+youtube-transcript-api
+pytube
+beautifulsoup4
+nest_asyncio
+lxml
+tqdm
+IPython
+html2text
