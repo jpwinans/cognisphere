@@ -76,8 +76,3 @@ Please read `CONTRIBUTING.md` for details on our code of conduct, and the proces
 
 This project is licensed under the MIT License - see the `LICENSE.md` file for details.
 
-## Acknowledgments
-
-- Thanks to the OpenAI team for their state-of-the-art AI, ML, and LLM techniques.
-- Elasticsearch team for providing an efficient and scalable indexing and searching solution.
-
