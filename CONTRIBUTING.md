@@ -56,7 +56,7 @@ If you encounter any issues or have feature requests, please create a new issue 
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the [LICENSE](https://github.com/jpwinans/cognisphere/LICENSE.md) of the project.
+By contributing to this project, you agree that your contributions will be licensed under the [LICENSE](https://github.com/jpwinans/cognisphere/blob/main/LICENSE.md) of the project.
 
 ---
 
