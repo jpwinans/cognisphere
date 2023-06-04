@@ -29,7 +29,7 @@ class ScrapeUrlsRequest(BaseModel):
     traverse: bool = False
 
 
-@app.post("/scrape_urls")
+@url_index_service.post("/scrape_urls")
 async def scrape_urls(request: ScrapeUrlsRequest):
     try:
         documents = web_ingestor.ingest_documents(
@@ -44,4 +44,4 @@ async def scrape_urls(request: ScrapeUrlsRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
+    uvicorn.run(url_index_service, host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
