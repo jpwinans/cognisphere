@@ -10,13 +10,13 @@ from text_processing import DocumentIndexer
 
 load_dotenv()
 
-QDRANT_HOST = os.getenv("QDRANT_HOST")
-QDRANT_PORT = os.getenv("QDRANT_PORT")
-SERVICE_HOST = os.getenv("SERVICE_HOST")
-URL_INDEXER_SERVICE_PORT = os.getenv("URL_INDEXER_SERVICE_PORT")
-INDEX_COLLECTION_NAME = os.getenv("INDEX_COLLECTION_NAME")
+QDRANT_HOST = os.environ["QDRANT_HOST"]
+QDRANT_PORT = os.environ["QDRANT_PORT"]
+SERVICE_HOST = os.environ["SERVICE_HOST"]
+URL_INDEXER_SERVICE_PORT = int(os.environ["URL_INDEXER_SERVICE_PORT"])
+INDEX_COLLECTION_NAME = os.environ["INDEX_COLLECTION_NAME"]
 
-url_index_service = FastAPI()
+app = FastAPI()
 web_ingestor = WebIngestor()
 document_indexer = DocumentIndexer(
     collection_name=INDEX_COLLECTION_NAME, host=QDRANT_HOST, port=QDRANT_PORT
@@ -29,7 +29,7 @@ class ScrapeUrlsRequest(BaseModel):
     traverse: bool = False
 
 
-@url_index_service.post("/scrape_urls")
+@app.post("/scrape_urls")
 async def scrape_urls(request: ScrapeUrlsRequest):
     try:
         documents = web_ingestor.ingest_documents(
@@ -44,4 +44,4 @@ async def scrape_urls(request: ScrapeUrlsRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("services:url_index_service", host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
+    uvicorn.run("services.url_index_service:app", host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
