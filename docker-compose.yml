@@ -1,14 +1,20 @@
 services:
   web_scraper:
-    build: ./services/web_scraper
+    build: 
+      context: ./services/web_scraper
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - QDRANT_HOST=${QDRANT_HOST}
-      - QDRANT_PORT=${QDRANT_PORT}
-      - SERVICE_HOST=${SERVICE_HOST}
-      - URL_INDEXER_SERVICE_PORT=${URL_INDEXER_SERVICE_PORT}
-      - INDEX_COLLECTION_NAME=${INDEX_COLLECTION_NAME}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      QDRANT_HOST: ${QDRANT_HOST}
+      QDRANT_PORT: ${QDRANT_PORT}
+      SERVICE_HOST: ${SERVICE_HOST}
+      URL_INDEXER_SERVICE_PORT: ${URL_INDEXER_SERVICE_PORT}
+      INDEX_COLLECTION_NAME: ${INDEX_COLLECTION_NAME}
     volumes:
-      - ./services/web_scraper:/app
+      - type: bind
+        source: ./services/web_scraper
+        target: /app
     ports:
-      - "8000:80"
+      - target: 80
+        published: 8000
+        protocol: tcp
+        mode: host
