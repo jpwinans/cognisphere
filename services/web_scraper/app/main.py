@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from data_ingestion import WebIngestor
-from text_processing import DocumentIndexer
+from cognisphere.shared.data_ingestion import WebIngestor
+from cognisphere.shared.text_processing import DocumentIndexer
 
 load_dotenv()
 
@@ -44,4 +44,4 @@ async def scrape_urls(request: ScrapeUrlsRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("services.url_index_service:app", host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT)
+    uvicorn.run("app", host=SERVICE_HOST, port=URL_INDEXER_SERVICE_PORT, reload=True)

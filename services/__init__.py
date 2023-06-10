@@ -1,1 +1,1 @@
-from .url_indexer_service import url_index_service
+from .url_indexer_service import app as url_index_service

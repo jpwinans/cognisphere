@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  web_scraper:
+    build: ./services/web_scraper
+    volumes:
+      - ./services/web_scraper:/app
+    ports:
+      - "8000:80"
+    environment:
+      - OPENAI_API_KEY=[key]
+      - QDRANT_HOST=host.docker.internal
+      - QDRANT_PORT=6333
+      - SERVICE_HOST=0.0.0.0
+      - URL_INDEXER_SERVICE_PORT=80
+      - INDEX_COLLECTION_NAME=documents
