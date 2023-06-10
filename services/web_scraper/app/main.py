@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from cognisphere.shared.data_ingestion import WebIngestor
-from cognisphere.shared.text_processing import DocumentIndexer
+from shared.data_ingestion import WebIngestor
+from shared.text_processing import DocumentIndexer
 
 load_dotenv()
 
