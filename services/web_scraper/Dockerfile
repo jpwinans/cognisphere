@@ -5,7 +5,7 @@ FROM python:3.9-slim-buster
 WORKDIR /app
 
 # Copy contents into the container at /app
-COPY shared /app/shared
+COPY common /app/common
 COPY services/web_scraper /app
 COPY requirements.txt /app/requirements.txt
 
@@ -17,4 +17,3 @@ EXPOSE 80
 
 # Run app.py when the container launches
 CMD ["python", "main.py"]
-#CMD ["sh"]

@@ -6,7 +6,7 @@ services:
       dockerfile: ./services/web_scraper/Dockerfile
     volumes:
       - ./services/web_scraper:/app
-      - ./shared:/app/shared
+      - ./common:/app/common
     ports:
       - "8000:8000"
     environment:
