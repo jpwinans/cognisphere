@@ -28,7 +28,7 @@ class WebIngestor(TextIngestor):
         self.reader = TrafilaturaWebReader()
 
     def ingest_documents(
-        self, urls: List[str], category: str = "document", traverse: bool = False
+        self, urls: List[str], categories: List[str] = ["document"], traverse: bool = False
     ) -> List[Document]:
         documents = []
         for url in urls:
@@ -44,7 +44,7 @@ class WebIngestor(TextIngestor):
                     doc.page_content = doc.page_content.strip()
                     doc.metadata = {
                         "source": links[i],
-                        "category": category,
+                        "categories": categories,
                         "doc_index": j,
                     }
                     documents.append(doc)
@@ -55,7 +55,7 @@ class WebIngestor(TextIngestor):
 if __name__ == "__main__":
     docs = WebIngestor().ingest_documents(
         ["https://python.langchain.com/en/latest/getting_started/concepts.html"],
-        category="api-documentation", traverse=False
+        categories=["api-documentation"], traverse=False
     )
     for doc in docs:
         print(doc.page_content)

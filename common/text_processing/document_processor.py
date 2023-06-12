@@ -4,8 +4,8 @@ from langchain.chat_models.openai import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.chat import HumanMessagePromptTemplate, ChatPromptTemplate
 from schema import Document, Section
-from text_processing.document_indexer import DocumentIndexer
-from text_processing.preprocessor import Preprocessor
+from common.text_processing.document_indexer import DocumentIndexer
+from common.text_processing.preprocessor import Preprocessor
 
 CHUNK_SIZE = 5000
 CHUNK_OVERLAP = 0

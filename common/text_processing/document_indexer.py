@@ -18,6 +18,14 @@ class DocumentIndexer:
             embeddings=self.embeddings,
         )
 
+    def get_vector_store(self) -> Qdrant:
+        """Returns the vector store."""
+        return self.vector_store
+    
+    def get_client(self) -> QdrantClient:
+        """Returns the client."""
+        return self.client
+
     def index_documents(self, documents: List[Document]) -> str:
         """Indexes the given Document in Qdrant and returns the document ID."""
         try:
@@ -61,3 +69,11 @@ class DocumentIndexer:
                 distance=rest.Distance[distance_func],
             ),
         )
+    
+    def find_by_category(self, category: str, k: int = 5) -> List[Document]:
+        """Performs a vector similarity search on the document index using the given query
+        vector. Returns matching Documents."""
+
+        
+        documents = self.vector_store.find_by_category(category, k=k)
+        return documents

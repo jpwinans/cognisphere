@@ -8,8 +8,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.schema import Document
 from langchain.text_splitter import TokenTextSplitter
 
-from text_processing import Preprocessor
-from utils import open_file
+from common.text_processing.preprocessor import Preprocessor
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -24,7 +23,7 @@ class TextIngestor:
             chunk_size=self.CHUNK_SIZE, chunk_overlap=self.CHUNK_OVERLAP
         )
 
-    def extract_text(self, file_path: str, category: str) -> List[Document]:
+    def extract_text(self, file_path: str, categories: List[str] = ["document"]) -> List[Document]:
         """
         Extracts text from txt file at the given path.
         """
@@ -37,7 +36,7 @@ class TextIngestor:
         source = os.path.basename(file_path)
         for i, doc in enumerate(chunks):
             doc.page_content = doc.page_content.strip()
-            doc.metadata = {"source": source, "category": category, "doc_index": i}
+            doc.metadata = {"source": source, "categories": categories, "doc_index": i}
 
         return chunks
 
@@ -47,13 +46,13 @@ class TextIngestor:
         return processed_text
 
     def ingest_documents(
-        self, file_paths: List[str], category: str = "document"
+        self, file_paths: List[str], categories: List[str] = ["document"]
     ) -> List[Document]:
         """
         Ingests a document from a file at the given path.
         """
         documents = []
         for file_path in file_paths:
-            documents.extend(self.extract_text(file_path, category))
+            documents.extend(self.extract_text(file_path, categories))
 
         return documents

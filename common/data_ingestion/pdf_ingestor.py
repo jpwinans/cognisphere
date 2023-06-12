@@ -1,4 +1,4 @@
-from data_ingestion import TextIngestor
+from .text_ingestor import TextIngestor
 from langchain.document_loaders import PyMuPDFLoader
 from google.cloud import documentai_v1beta3 as documentai
 from typing import List

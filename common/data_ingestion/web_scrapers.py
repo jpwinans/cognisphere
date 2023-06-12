@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import requests
 from llama_index.readers.base import BaseReader
 from llama_index.readers.schema.base import Document
-from text_processing import Preprocessor
+from common.text_processing.preprocessor import Preprocessor
 
 logger = logging.getLogger(__name__)
 
