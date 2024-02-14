@@ -1,4 +1,4 @@
-# CogniSphere
+# CogniSphere (WIP)
 
 CogniSphere is a Python-based system designed to programmatically index text from various sources, including YouTube transcripts, Wikipedia, scientific journals, and books. It focuses on logical modules, document input, preprocessing, appropriate indexing, data structuring like knowledge graphs, semantic search, and vector embedding. CogniSphere performs textual analysis, compares themes, concepts, and ideas, and generates novel hypotheses, questions, inferred conclusions, and theories for an AI agent to ask relevant questions and gain new knowledge.
 
