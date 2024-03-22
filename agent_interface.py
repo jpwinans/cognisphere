@@ -10,18 +10,26 @@ from langchain.agents import (
     Tool,
 )
 from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import StringPromptTemplate
 from langchain.schema import AgentAction, AgentFinish
 from langchain.tools import DuckDuckGoSearchRun
+from langchain.vectorstores.base import VectorStoreRetriever
+from pydantic import BaseModel, Field
 
 from common.text_processing.document_indexer import DocumentIndexer
 
-template = """Answer the following questions as best you can, but speaking as passionate buddhist lama. You have access to the following tools:
+chain_template = """You are an expert Python engineer.  You have access to the following tools:
 
 {tools}
 
-Use the following format:
+This is our previous conversation history:
+
+{history}
+
+I will ask a question, then you will think about what to do next, and then take an action. You will then observe the result of that action, and then think about what to do next. This will repeat until you have a detailed final answer to the original question. Always use the following format as your response:
 
 Question: the input question you must answer
 Thought: you should always think about what to do
@@ -30,11 +38,11 @@ Action Input: the input to the action
 Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
 Thought: I now know the final answer
-Final Answer: the final answer to the original input question
+Final Answer: a very detailed final answer to the original input question
 
-Begin! Remember to answer as a passionate and informative buddhist lama when giving your final answer.
+Begin! Remember to answer as a expert Python engineer when giving your detailed final answer. And remember to prefix it with "Final Answer: ".
 
-Question: {input}
+Question: {human_input}
 {agent_scratchpad}"""
 
 
@@ -85,13 +93,15 @@ class CustomOutputParser(AgentOutputParser):
             tool=action, tool_input=action_input.strip(" ").strip('"'), log=llm_output
         )
 
+class KBInput(BaseModel):
+    retriever: VectorStoreRetriever = Field()
+    llm: ChatOpenAI = Field()
 
-def search_online(input_text):
+def search_langchain(input_text):
     search = DuckDuckGoSearchRun().run(
-        f"site:www.rigpawiki.org things to do{input_text}"
+        f"site:https://python.langchain.com/ {input_text}"
     )
     return search
-
 
 def search_general(input_text):
     search = DuckDuckGoSearchRun().run(f"{input_text}")
@@ -100,37 +110,43 @@ def search_general(input_text):
 
 def search_knowledge(input_text):
     retriever = DocumentIndexer().get_vector_store().as_retriever()
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0, max_tokens=2048)
-    qa = ConversationalRetrievalChain().from_llm(llm=llm, retriever=retriever)
+    llm = ChatOpenAI(model_name="gpt-4", temperature=0, max_tokens=2048)
+    qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
     return qa({"question": {input_text}})["answer"]
 
 
 @cl.langchain_factory(use_async=False)
 def agent():
+
     tools = [
+        # Tool(
+        #     name="Search knowledge base",
+        #     func=search_knowledge,
+        #     description="useful for all first attempts at answering questions",
+        # ),
         Tool(
-            name="Search rigpawiki",
-            func=search_online,
-            description="useful for when you need to answer questions about buddhism that you don't know the answer to",
+            name="Search langchain",
+            func=search_langchain,
+            description="useful for when you need to answer questions about langchain",
         ),
         Tool(
             name="Search general",
             func=search_general,
             description="useful for when you need to answer general questions not related to buddhism",
-        ),
-        
-        
+        ), 
     ]
+    
     prompt = CustomPromptTemplate(
-        template=template,
+        template=chain_template,
         tools=tools,
         # This omits the `agent_scratchpad`, `tools`, and `tool_names` variables because those are generated dynamically
         # This includes the `intermediate_steps` variable because that is needed
-        input_variables=["input", "intermediate_steps"],
+        input_variables=["human_input", "intermediate_steps", "history"],
     )
 
     output_parser = CustomOutputParser()
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", temperature=0, max_tokens=2048)
+    memory = ConversationBufferMemory()
+    llm = ChatOpenAI(model_name="gpt-4", temperature=0, max_tokens=2048)
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     tool_names = [tool.name for tool in tools]
 
@@ -140,7 +156,8 @@ def agent():
         stop=["\nObservation:"],
         allowed_tools=tool_names,
     )
+
     agent_executor = AgentExecutor.from_agent_and_tools(
-        agent=agent, tools=tools, verbose=True
+        agent=agent, tools=tools, memory=memory, verbose=True
     )
     return agent_executor

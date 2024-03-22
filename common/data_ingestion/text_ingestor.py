@@ -2,7 +2,6 @@ import os
 from typing import List
 
 import openai
-from dotenv import load_dotenv
 from langchain.document_loaders import TextLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.schema import Document
@@ -14,13 +13,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class TextIngestor:
-    CHUNK_SIZE = 1000
-    CHUNK_OVERLAP = 0
-
-    def __init__(self):
+ 
+    def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 0):
         self.embeddings = OpenAIEmbeddings()
         self.text_splitter = TokenTextSplitter(
-            chunk_size=self.CHUNK_SIZE, chunk_overlap=self.CHUNK_OVERLAP
+            chunk_size=chunk_size, chunk_overlap=chunk_overlap
         )
 
     def extract_text(self, file_path: str, categories: List[str] = ["document"]) -> List[Document]:

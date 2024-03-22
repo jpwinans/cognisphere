@@ -1,11 +1,16 @@
-from tqdm import tqdm
-from langchain.text_splitter import TokenTextSplitter
+import re
+from typing import List, Tuple
+
 from langchain.chat_models.openai import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.prompts.chat import HumanMessagePromptTemplate, ChatPromptTemplate
-from schema import Document, Section
+from langchain.prompts.chat import (ChatPromptTemplate,
+                                    HumanMessagePromptTemplate)
+from langchain.text_splitter import TokenTextSplitter
+from tqdm import tqdm
+
 from common.text_processing.document_indexer import DocumentIndexer
 from common.text_processing.preprocessor import Preprocessor
+from schema import Document, Section
 
 CHUNK_SIZE = 5000
 CHUNK_OVERLAP = 0
@@ -23,7 +28,7 @@ class DocumentProcessor:
 
     def generate_response(
         self, template: str, text: str, model_name: str = "gpt-3.5-turbo"
-    ) -> list:
+    ) -> List[str]:
         message_prompt = HumanMessagePromptTemplate.from_template(template)
         chat_prompt = ChatPromptTemplate.from_messages([message_prompt])
         response = ""
@@ -50,6 +55,7 @@ class DocumentProcessor:
                 response += chat_model(
                     chat_prompt.format_prompt(text=chunk).to_messages()
                 ).content
+                response += "/n/n"
         else:
             response.append(
                 chat_model(chat_prompt.format_prompt(text=text).to_messages()).content
@@ -90,55 +96,6 @@ class DocumentProcessor:
         template = "Summarize this text, while preserving key concepts and technical keywords: {text}"
         return self.generate_response(template, text, model_name)
 
-    def summarize_document(
-        self, document: Document, with_sections: bool = False
-    ) -> Document:
-        # Split the full text into chunks
-        get_text = document.get_text()
-        text_splitter = TokenTextSplitter(
-            chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-        )
-        chunks = text_splitter.split_text(get_text)
-
-        # Summarize each chunk and concatenate the summaries
-        summaries = [
-            self.summary_completion(chunk, model_name="gpt-4") for chunk in chunks
-        ]
-
-        # Set the Document's summary attribute
-        document.summary = "\n".join(summaries)
-
-        # Vectorize the summary and set Document vector_representation attribute
-        document.vector_representation = self.embeddings.embed_documents(
-            [document.summary]
-        )[0]
-
-        if with_sections:
-            if len(document.sections) > 1:
-                document.sections = [
-                    self.summarize_section(section) for section in document.sections
-                ]
-            else:
-                document.sections[0].summary = document.summary
-
-        return document
-
-    def summarize_section(self, section: Section) -> Section:
-        section.summary = self.summary_completion(
-            section.section_text, model_name="gpt-4"
-        )
-
-        # Vectorize the summary and set Section vector_representation attribute
-        section.vector_representation = self.embeddings.embed_documents(
-            [section.summary]
-        )[0]
-
-        return section
-
-    def index_document(self, document: Document, index_name: str = "documents") -> str:
-        indexer = DocumentIndexer(index_name=index_name)
-        return indexer.index_document(document)
-
     def process_document(
         self, document: Document, index_name: str = "documents"
     ) -> Document:
@@ -161,6 +118,40 @@ class DocumentProcessor:
                 document = func(document)
 
         return document
+
+    def split_questions(self, text) -> List[str]:
+        # Split the text by the newline character
+        lines = text.split('\n')
+        
+        # Remove any empty strings from the list
+        lines = [line for line in lines if line]
+        
+        # Remove the numbers at the beginning of each line
+        questions = [re.sub(r'^\d+\.\s*', '', line) for line in lines]
+        
+        return questions
+
+    def extract_questions_and_answers(
+        self, text: str, model_name: str = "gpt-4"
+    ) -> Tuple[List[str], List[str]]:
+        questions_template = """
+        Extract a list of each question asked by students to the teacher in this transcript:
+        
+        {text}
+
+        """
+        questions_blob = self.generate_response(questions_template, text, model_name)
+
+        questions = self.split_questions(questions_blob)
+
+        answers = []
+        for question in questions:
+            answers_template = f"Provide the teacher's exact answer (word for word) from this transcript to the question '{question}' If you can't find the exact answer from this transcript, output NOT FOUND.:/n/n" + "{text}"
+            answers.append(self.generate_response(answers_template, text, model_name))
+
+        return questions, answers
+
+
 
 
 # To provide a better generated script, you could have extracted more specific information from the original transcript, such as:
