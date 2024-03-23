@@ -17,7 +17,7 @@ from langchain.tools import DuckDuckGoSearchRun
 
 from common.text_processing.document_indexer import DocumentIndexer
 
-template = """Answer the following questions as best you can, but speaking as passionate buddhist lama. You have access to the following tools:
+template = """Answer the following questions as best you can, but speaking as passionate teacher. You have access to the following tools:
 
 {tools}
 
