@@ -2,7 +2,7 @@ MIT License
 
 CogniSphere
 
-Copyright (c) 2023 James P. Winans II
+Copyright (c) 2024 James P. Winans II
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
