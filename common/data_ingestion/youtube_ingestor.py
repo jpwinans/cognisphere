@@ -77,7 +77,7 @@ class YoutubeIngestor(TextIngestor):
 # Provide Main Functionality to test the module
 if __name__ == "__main__":
     docs = YoutubeIngestor().ingest_documents(
-        ["https://www.youtube.com/watch?v=IdA8DjiQ6us"],
+        ["https://www.youtube.com/watch?v=8R7QOJgGyIQ"],
         categories=["youtube", "writing"],
     )
     for doc in docs:
